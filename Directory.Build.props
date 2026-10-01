@@ -1,0 +1,14 @@
+<Project>
+
+  <!--
+    The Cosmos release the server builds against: the first one with the
+    public console-session API that TelnetSession derives from. Override it
+    to build against packages from a local Cosmos build, which `make setup`
+    in the Cosmos repository publishes to the local-packages source:
+      dotnet test -p:CosmosVersion=3.0.89.20261001
+  -->
+  <PropertyGroup>
+    <CosmosVersion Condition="'$(CosmosVersion)' == ''">3.0.89</CosmosVersion>
+  </PropertyGroup>
+
+</Project>

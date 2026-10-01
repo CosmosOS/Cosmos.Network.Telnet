@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    A library over Cosmos.Kernel.System's console sessions and the BCL's
+    System.Net.Sockets, which a Cosmos Gen3 kernel runs on its own network
+    stack through the socket plugs.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <IsAotCompatible>true</IsAotCompatible>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RootNamespace>Cosmos.Network.Telnet</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Cosmos.Network.Telnet</PackageId>
+    <Version>1.0.0</Version>
+    <Title>Cosmos.Network.Telnet</Title>
+    <Authors>Cosmos</Authors>
+    <Company>Cosmos</Company>
+    <Description>Telnet server for Cosmos Gen3 kernels: every client gets a console session and a shell of its own.</Description>
+    <PackageTags>cosmos;telnet;server;shell;kernel</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/CosmosOS/Cosmos.Network.Telnet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/CosmosOS/Cosmos.Network.Telnet</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cosmos.Kernel.System" Version="$(CosmosVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../LICENSE.txt" Pack="true" PackagePath="/" />
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+    <None Include="../../resources/icon.png" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Cosmos.Network.Telnet.Tests" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Cosmos.Network.Telnet/Cosmos.Network.Telnet.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Cosmos.Network.Telnet.Tests/Cosmos.Network.Telnet.Tests.csproj" />
+  </Folder>
+</Solution>

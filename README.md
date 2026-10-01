@@ -50,12 +50,6 @@ server.Stop();
 
 The connection closes when the shell returns. The sessions are listed and numbered with the kernel's others by `SessionManager`, and Alt with a function key shows one on the display, where the local keyboard can type into it.
 
-The server negotiates the way a terminal expects:
-
-- It echoes what is typed and suppresses go-ahead, which puts the client in character-at-a-time mode, so line editing works remotely: arrows, Home and End, Backspace and Delete.
-- It asks for the window size (NAWS), so the session's `Console.WindowWidth` and `WindowHeight` are the client's, and follow it when the window is resized.
-- Output is sent as VT100 sequences: colours, cursor moves and `Console.Clear()` show on the client as they do on the display.
-
 ### Reaching a kernel running in QEMU
 
 With QEMU user-mode networking, forward a host port to the guest's port 23. With the Cosmos CLI:
@@ -67,18 +61,6 @@ telnet localhost 2323
 
 With plain QEMU, the forward is an option of the user-mode NIC: `-nic user,model=e1000e,hostfwd=tcp::2323-:23`.
 
-### Security
-
-Telnet sends everything in the clear, and the server asks for no password: anyone who reaches the port gets a shell. Serve it on a network you trust, such as QEMU's private user network.
-
-## Building and testing
-
-```sh
-dotnet test Cosmos.Network.Telnet.slnx
-```
-
-The tests run the Telnet decoder in the host process: option negotiation, window size and key sequences. The server builds against the `Cosmos.Kernel.System` release named by `CosmosVersion` in `Directory.Build.props`; to build against a local Cosmos build, pass its version, for example `-p:CosmosVersion=3.0.89`.
-
 ## Authors
 
 👤 **[@valentinbreiz](https://github.com/valentinbreiz)**
@@ -88,10 +70,6 @@ The tests run the Telnet decoder in the host process: option negotiation, window
 Contributions, issues and feature requests are welcome!
 
 Feel free to check [issues page](https://github.com/CosmosOS/Cosmos.Network.Telnet/issues).
-
-## Show your support
-
-Give a ⭐️ if this project helped you!
 
 ## 📝 License
 

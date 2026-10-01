@@ -2,12 +2,17 @@
 
   <!--
     The Cosmos release the server builds against: the first one with the
-    public console-session API that TelnetSession derives from. Override it
-    to build against packages from a local Cosmos build, which `make setup`
-    in the Cosmos repository publishes to the local-packages source:
+    public console-session API that TelnetSession derives from.
+
+    A Cosmos checkout next to this repository, where the DevKernel builds
+    this clone from, wins: the server then builds against the Cosmos the
+    DevKernel builds, whose version `make setup` writes to its global.json
+    and publishes to the local-packages source. Pass it to override both:
       dotnet test -p:CosmosVersion=3.0.89.20261001
   -->
   <PropertyGroup>
+    <_CosmosGlobalJson>$(MSBuildThisFileDirectory)../Cosmos/global.json</_CosmosGlobalJson>
+    <CosmosVersion Condition="'$(CosmosVersion)' == '' and Exists('$(_CosmosGlobalJson)')">$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(_CosmosGlobalJson)')), '&quot;Cosmos\.Sdk&quot;\s*:\s*&quot;([^&quot;]+)&quot;').Groups[1].Value)</CosmosVersion>
     <CosmosVersion Condition="'$(CosmosVersion)' == ''">3.0.89</CosmosVersion>
   </PropertyGroup>
 

@@ -13,7 +13,7 @@
   <PropertyGroup>
     <_CosmosGlobalJson>$(MSBuildThisFileDirectory)../Cosmos/global.json</_CosmosGlobalJson>
     <CosmosVersion Condition="'$(CosmosVersion)' == '' and Exists('$(_CosmosGlobalJson)')">$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(_CosmosGlobalJson)')), '&quot;Cosmos\.Sdk&quot;\s*:\s*&quot;([^&quot;]+)&quot;').Groups[1].Value)</CosmosVersion>
-    <CosmosVersion Condition="'$(CosmosVersion)' == ''">3.0.89</CosmosVersion>
+    <CosmosVersion Condition="'$(CosmosVersion)' == ''">3.0.90</CosmosVersion>
   </PropertyGroup>
 
 </Project>

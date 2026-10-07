@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Cosmos.Kernel.System.Keyboard;
+using Cosmos.Kernel.System.Input;
 using Cosmos.Kernel.System.Sessions;
 
 namespace Cosmos.Network.Telnet;

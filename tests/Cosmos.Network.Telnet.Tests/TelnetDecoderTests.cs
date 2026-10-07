@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Cosmos.Kernel.System.Keyboard;
+using Cosmos.Kernel.System.Input;
 using NUnit.Framework;
 
 namespace Cosmos.Network.Telnet.Tests;
@@ -160,7 +160,7 @@ public class TelnetDecoderTests
             Feed("aZ 7");
 
             Assert.That(_keys.Select(k => k.KeyChar), Is.EqualTo("aZ 7"));
-            Assert.That(_keys.Select(k => k.Key), Is.EqualTo(new[] { ConsoleKeyEx.A, ConsoleKeyEx.Z, ConsoleKeyEx.Spacebar, ConsoleKeyEx.D7 }));
+            Assert.That(_keys.Select(k => k.Key), Is.EqualTo(new[] { Key.A, Key.Z, Key.Spacebar, Key.D7 }));
         }
 
         [TestCase("\r\n")]
@@ -171,7 +171,7 @@ public class TelnetDecoderTests
         {
             Feed(ending);
 
-            Assert.That(_keys.Select(k => k.Key), Is.EqualTo(new[] { ConsoleKeyEx.Enter }));
+            Assert.That(_keys.Select(k => k.Key), Is.EqualTo(new[] { Key.Enter }));
         }
 
         [TestCase((byte)0x7F)]
@@ -180,26 +180,26 @@ public class TelnetDecoderTests
         {
             Feed(erase);
 
-            Assert.That(_keys.Single().Key, Is.EqualTo(ConsoleKeyEx.Backspace));
+            Assert.That(_keys.Single().Key, Is.EqualTo(Key.Backspace));
         }
 
-        [TestCase("\x1b[A", ConsoleKeyEx.UpArrow)]
-        [TestCase("\x1b[B", ConsoleKeyEx.DownArrow)]
-        [TestCase("\x1b[C", ConsoleKeyEx.RightArrow)]
-        [TestCase("\x1b[D", ConsoleKeyEx.LeftArrow)]
-        [TestCase("\x1bOA", ConsoleKeyEx.UpArrow)]
-        [TestCase("\x1b[H", ConsoleKeyEx.Home)]
-        [TestCase("\x1b[F", ConsoleKeyEx.End)]
-        [TestCase("\x1b[1~", ConsoleKeyEx.Home)]
-        [TestCase("\x1b[2~", ConsoleKeyEx.Insert)]
-        [TestCase("\x1b[3~", ConsoleKeyEx.Delete)]
-        [TestCase("\x1b[4~", ConsoleKeyEx.End)]
-        [TestCase("\x1b[5~", ConsoleKeyEx.PageUp)]
-        [TestCase("\x1b[6~", ConsoleKeyEx.PageDown)]
-        [TestCase("\x1bOP", ConsoleKeyEx.F1)]
-        [TestCase("\x1b[15~", ConsoleKeyEx.F5)]
-        [TestCase("\x1b[24~", ConsoleKeyEx.F12)]
-        public void WhenAKeySequenceArrives_ItsKeyIsReported(string sequence, ConsoleKeyEx expected)
+        [TestCase("\x1b[A", Key.UpArrow)]
+        [TestCase("\x1b[B", Key.DownArrow)]
+        [TestCase("\x1b[C", Key.RightArrow)]
+        [TestCase("\x1b[D", Key.LeftArrow)]
+        [TestCase("\x1bOA", Key.UpArrow)]
+        [TestCase("\x1b[H", Key.Home)]
+        [TestCase("\x1b[F", Key.End)]
+        [TestCase("\x1b[1~", Key.Home)]
+        [TestCase("\x1b[2~", Key.Insert)]
+        [TestCase("\x1b[3~", Key.Delete)]
+        [TestCase("\x1b[4~", Key.End)]
+        [TestCase("\x1b[5~", Key.PageUp)]
+        [TestCase("\x1b[6~", Key.PageDown)]
+        [TestCase("\x1bOP", Key.F1)]
+        [TestCase("\x1b[15~", Key.F5)]
+        [TestCase("\x1b[24~", Key.F12)]
+        public void WhenAKeySequenceArrives_ItsKeyIsReported(string sequence, Key expected)
         {
             Feed(sequence);
 
@@ -212,7 +212,7 @@ public class TelnetDecoderTests
             Feed("\x1b[1;5C");
 
             KeyEvent key = _keys.Single();
-            Assert.That(key.Key, Is.EqualTo(ConsoleKeyEx.RightArrow));
+            Assert.That(key.Key, Is.EqualTo(Key.RightArrow));
             Assert.That(key.Modifiers, Is.EqualTo(ConsoleModifiers.Control));
         }
 
@@ -222,7 +222,7 @@ public class TelnetDecoderTests
             Feed("\x1b[");
             Feed("3~");
 
-            Assert.That(_keys.Select(k => k.Key), Is.EqualTo(new[] { ConsoleKeyEx.Delete }));
+            Assert.That(_keys.Select(k => k.Key), Is.EqualTo(new[] { Key.Delete }));
         }
 
         [Test]
@@ -230,7 +230,7 @@ public class TelnetDecoderTests
         {
             Feed("\x1b");
 
-            Assert.That(_keys.Single().Key, Is.EqualTo(ConsoleKeyEx.Escape));
+            Assert.That(_keys.Single().Key, Is.EqualTo(Key.Escape));
         }
 
         [Test]
@@ -249,7 +249,7 @@ public class TelnetDecoderTests
             Feed(0x03);
 
             KeyEvent key = _keys.Single();
-            Assert.That(key.Key, Is.EqualTo(ConsoleKeyEx.C));
+            Assert.That(key.Key, Is.EqualTo(Key.C));
             Assert.That(key.Modifiers, Is.EqualTo(ConsoleModifiers.Control));
         }
 
@@ -277,7 +277,7 @@ public class TelnetDecoderTests
             Feed(Iac, InterruptProcess);
 
             KeyEvent key = _keys.Single();
-            Assert.That(key.Key, Is.EqualTo(ConsoleKeyEx.C));
+            Assert.That(key.Key, Is.EqualTo(Key.C));
             Assert.That(key.Modifiers, Is.EqualTo(ConsoleModifiers.Control));
         }
     }

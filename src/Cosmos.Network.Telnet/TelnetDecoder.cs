@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using Cosmos.Kernel.System.Keyboard;
+using Cosmos.Kernel.System.Input;
 
 namespace Cosmos.Network.Telnet;
 
@@ -148,7 +148,7 @@ internal sealed class TelnetDecoder
 
         if (_keyState == KeyState.Escape)
         {
-            keys.Add(Key('\x1b', ConsoleKeyEx.Escape));
+            keys.Add(KeyOf('\x1b', Key.Escape));
             _keyState = KeyState.Text;
         }
     }
@@ -187,10 +187,10 @@ internal sealed class TelnetDecoder
                         _commandState = CommandState.Subnegotiation;
                         break;
                     case InterruptProcess:
-                        keys.Add(Key('\x03', ConsoleKeyEx.C, control: true));
+                        keys.Add(KeyOf('\x03', Key.C, control: true));
                         break;
                     case EraseCharacter:
-                        keys.Add(Key('\b', ConsoleKeyEx.Backspace));
+                        keys.Add(KeyOf('\b', Key.Backspace));
                         break;
                 }
                 break;
@@ -361,12 +361,12 @@ internal sealed class TelnetDecoder
         {
             case (byte)'\r':
                 _afterCarriageReturn = true;
-                keys.Add(Key('\r', ConsoleKeyEx.Enter));
+                keys.Add(KeyOf('\r', Key.Enter));
                 return;
             case (byte)'\n':
                 if (!afterCarriageReturn)
                 {
-                    keys.Add(Key('\r', ConsoleKeyEx.Enter));
+                    keys.Add(KeyOf('\r', Key.Enter));
                 }
                 return;
             case 0:
@@ -376,10 +376,10 @@ internal sealed class TelnetDecoder
                 return;
             case (byte)'\b':
             case Delete:
-                keys.Add(Key('\b', ConsoleKeyEx.Backspace));
+                keys.Add(KeyOf('\b', Key.Backspace));
                 return;
             case (byte)'\t':
-                keys.Add(Key('\t', ConsoleKeyEx.Tab));
+                keys.Add(KeyOf('\t', Key.Tab));
                 return;
         }
 
@@ -388,7 +388,7 @@ internal sealed class TelnetDecoder
             // Control and a letter.
             if (value <= 26)
             {
-                keys.Add(Key((char)value, LetterKey((char)('A' + value - 1)), control: true));
+                keys.Add(KeyOf((char)value, LetterKey((char)('A' + value - 1)), control: true));
             }
 
             return;
@@ -432,7 +432,7 @@ internal sealed class TelnetDecoder
 
             case Escape:
                 // Escape pressed twice: the first is a key of its own.
-                keys.Add(Key('\x1b', ConsoleKeyEx.Escape));
+                keys.Add(KeyOf('\x1b', Key.Escape));
                 return;
         }
 
@@ -446,7 +446,7 @@ internal sealed class TelnetDecoder
             return;
         }
 
-        keys.Add(Key('\x1b', ConsoleKeyEx.Escape));
+        keys.Add(KeyOf('\x1b', Key.Escape));
         DecodeText(value, keys);
     }
 
@@ -485,24 +485,24 @@ internal sealed class TelnetDecoder
             return;
         }
 
-        ConsoleKeyEx key = value switch
+        Key key = value switch
         {
-            (byte)'A' => ConsoleKeyEx.UpArrow,
-            (byte)'B' => ConsoleKeyEx.DownArrow,
-            (byte)'C' => ConsoleKeyEx.RightArrow,
-            (byte)'D' => ConsoleKeyEx.LeftArrow,
-            (byte)'H' => ConsoleKeyEx.Home,
-            (byte)'F' => ConsoleKeyEx.End,
-            (byte)'P' => ConsoleKeyEx.F1,
-            (byte)'Q' => ConsoleKeyEx.F2,
-            (byte)'R' => ConsoleKeyEx.F3,
-            (byte)'S' => ConsoleKeyEx.F4,
-            (byte)'Z' => ConsoleKeyEx.Tab,
+            (byte)'A' => Key.UpArrow,
+            (byte)'B' => Key.DownArrow,
+            (byte)'C' => Key.RightArrow,
+            (byte)'D' => Key.LeftArrow,
+            (byte)'H' => Key.Home,
+            (byte)'F' => Key.End,
+            (byte)'P' => Key.F1,
+            (byte)'Q' => Key.F2,
+            (byte)'R' => Key.F3,
+            (byte)'S' => Key.F4,
+            (byte)'Z' => Key.Tab,
             (byte)'~' => TildeKey(_firstParameter),
-            _ => ConsoleKeyEx.NoName,
+            _ => Key.NoName,
         };
 
-        if (key == ConsoleKeyEx.NoName)
+        if (key == Key.NoName)
         {
             return;
         }
@@ -511,121 +511,121 @@ internal sealed class TelnetDecoder
         // bit set of Shift (1), Alt (2) and Control (4).
         int modifiers = Math.Max(_secondParameter - 1, 0);
         bool shift = (modifiers & 1) != 0 || value == 'Z';
-        char keyChar = key == ConsoleKeyEx.Tab ? '\t' : '\0';
+        char keyChar = key == Key.Tab ? '\t' : '\0';
         keys.Add(new KeyEvent(keyChar, key, shift, (modifiers & 2) != 0, (modifiers & 4) != 0, KeyEvent.KeyEventType.Make));
     }
 
     private static void DecodeSingleShift(byte value, List<KeyEvent> keys)
     {
-        ConsoleKeyEx key = value switch
+        Key key = value switch
         {
-            (byte)'A' => ConsoleKeyEx.UpArrow,
-            (byte)'B' => ConsoleKeyEx.DownArrow,
-            (byte)'C' => ConsoleKeyEx.RightArrow,
-            (byte)'D' => ConsoleKeyEx.LeftArrow,
-            (byte)'H' => ConsoleKeyEx.Home,
-            (byte)'F' => ConsoleKeyEx.End,
-            (byte)'P' => ConsoleKeyEx.F1,
-            (byte)'Q' => ConsoleKeyEx.F2,
-            (byte)'R' => ConsoleKeyEx.F3,
-            (byte)'S' => ConsoleKeyEx.F4,
-            (byte)'M' => ConsoleKeyEx.Enter,
-            _ => ConsoleKeyEx.NoName,
+            (byte)'A' => Key.UpArrow,
+            (byte)'B' => Key.DownArrow,
+            (byte)'C' => Key.RightArrow,
+            (byte)'D' => Key.LeftArrow,
+            (byte)'H' => Key.Home,
+            (byte)'F' => Key.End,
+            (byte)'P' => Key.F1,
+            (byte)'Q' => Key.F2,
+            (byte)'R' => Key.F3,
+            (byte)'S' => Key.F4,
+            (byte)'M' => Key.Enter,
+            _ => Key.NoName,
         };
 
-        if (key != ConsoleKeyEx.NoName)
+        if (key != Key.NoName)
         {
-            keys.Add(Key(key == ConsoleKeyEx.Enter ? '\r' : '\0', key));
+            keys.Add(KeyOf(key == Key.Enter ? '\r' : '\0', key));
         }
     }
 
     /// <summary>The key of a <c>CSI n ~</c> sequence, by its number (the VT220 and xterm set).</summary>
-    private static ConsoleKeyEx TildeKey(int number) => number switch
+    private static Key TildeKey(int number) => number switch
     {
-        1 or 7 => ConsoleKeyEx.Home,
-        2 => ConsoleKeyEx.Insert,
-        3 => ConsoleKeyEx.Delete,
-        4 or 8 => ConsoleKeyEx.End,
-        5 => ConsoleKeyEx.PageUp,
-        6 => ConsoleKeyEx.PageDown,
-        11 => ConsoleKeyEx.F1,
-        12 => ConsoleKeyEx.F2,
-        13 => ConsoleKeyEx.F3,
-        14 => ConsoleKeyEx.F4,
-        15 => ConsoleKeyEx.F5,
-        17 => ConsoleKeyEx.F6,
-        18 => ConsoleKeyEx.F7,
-        19 => ConsoleKeyEx.F8,
-        20 => ConsoleKeyEx.F9,
-        21 => ConsoleKeyEx.F10,
-        23 => ConsoleKeyEx.F11,
-        24 => ConsoleKeyEx.F12,
-        _ => ConsoleKeyEx.NoName,
+        1 or 7 => Key.Home,
+        2 => Key.Insert,
+        3 => Key.Delete,
+        4 or 8 => Key.End,
+        5 => Key.PageUp,
+        6 => Key.PageDown,
+        11 => Key.F1,
+        12 => Key.F2,
+        13 => Key.F3,
+        14 => Key.F4,
+        15 => Key.F5,
+        17 => Key.F6,
+        18 => Key.F7,
+        19 => Key.F8,
+        20 => Key.F9,
+        21 => Key.F10,
+        23 => Key.F11,
+        24 => Key.F12,
+        _ => Key.NoName,
     };
 
     /// <summary>The key a character is typed with: its letter or digit key, the space bar, or no particular key.</summary>
     private static KeyEvent CharacterKey(char value)
     {
-        ConsoleKeyEx key = value switch
+        Key key = value switch
         {
             >= 'a' and <= 'z' => LetterKey((char)(value - 'a' + 'A')),
             >= 'A' and <= 'Z' => LetterKey(value),
             >= '0' and <= '9' => DigitKey(value),
-            ' ' => ConsoleKeyEx.Spacebar,
-            _ => ConsoleKeyEx.NoName,
+            ' ' => Key.Spacebar,
+            _ => Key.NoName,
         };
 
         return new KeyEvent(value, key, value is >= 'A' and <= 'Z', false, false, KeyEvent.KeyEventType.Make);
     }
 
-    private static KeyEvent Key(char keyChar, ConsoleKeyEx key, bool control = false) =>
+    private static KeyEvent KeyOf(char keyChar, Key key, bool control = false) =>
         new KeyEvent(keyChar, key, false, false, control, KeyEvent.KeyEventType.Make);
 
-    /// <summary>The key of an upper-case letter; <see cref="ConsoleKeyEx"/> lists them in keyboard order, not alphabetical.</summary>
-    private static ConsoleKeyEx LetterKey(char letter) => letter switch
+    /// <summary>The key of an upper-case letter; <see cref="Key"/> lists them in keyboard order, not alphabetical.</summary>
+    private static Key LetterKey(char letter) => letter switch
     {
-        'A' => ConsoleKeyEx.A,
-        'B' => ConsoleKeyEx.B,
-        'C' => ConsoleKeyEx.C,
-        'D' => ConsoleKeyEx.D,
-        'E' => ConsoleKeyEx.E,
-        'F' => ConsoleKeyEx.F,
-        'G' => ConsoleKeyEx.G,
-        'H' => ConsoleKeyEx.H,
-        'I' => ConsoleKeyEx.I,
-        'J' => ConsoleKeyEx.J,
-        'K' => ConsoleKeyEx.K,
-        'L' => ConsoleKeyEx.L,
-        'M' => ConsoleKeyEx.M,
-        'N' => ConsoleKeyEx.N,
-        'O' => ConsoleKeyEx.O,
-        'P' => ConsoleKeyEx.P,
-        'Q' => ConsoleKeyEx.Q,
-        'R' => ConsoleKeyEx.R,
-        'S' => ConsoleKeyEx.S,
-        'T' => ConsoleKeyEx.T,
-        'U' => ConsoleKeyEx.U,
-        'V' => ConsoleKeyEx.V,
-        'W' => ConsoleKeyEx.W,
-        'X' => ConsoleKeyEx.X,
-        'Y' => ConsoleKeyEx.Y,
-        'Z' => ConsoleKeyEx.Z,
-        _ => ConsoleKeyEx.NoName,
+        'A' => Key.A,
+        'B' => Key.B,
+        'C' => Key.C,
+        'D' => Key.D,
+        'E' => Key.E,
+        'F' => Key.F,
+        'G' => Key.G,
+        'H' => Key.H,
+        'I' => Key.I,
+        'J' => Key.J,
+        'K' => Key.K,
+        'L' => Key.L,
+        'M' => Key.M,
+        'N' => Key.N,
+        'O' => Key.O,
+        'P' => Key.P,
+        'Q' => Key.Q,
+        'R' => Key.R,
+        'S' => Key.S,
+        'T' => Key.T,
+        'U' => Key.U,
+        'V' => Key.V,
+        'W' => Key.W,
+        'X' => Key.X,
+        'Y' => Key.Y,
+        'Z' => Key.Z,
+        _ => Key.NoName,
     };
 
-    private static ConsoleKeyEx DigitKey(char digit) => digit switch
+    private static Key DigitKey(char digit) => digit switch
     {
-        '0' => ConsoleKeyEx.D0,
-        '1' => ConsoleKeyEx.D1,
-        '2' => ConsoleKeyEx.D2,
-        '3' => ConsoleKeyEx.D3,
-        '4' => ConsoleKeyEx.D4,
-        '5' => ConsoleKeyEx.D5,
-        '6' => ConsoleKeyEx.D6,
-        '7' => ConsoleKeyEx.D7,
-        '8' => ConsoleKeyEx.D8,
-        '9' => ConsoleKeyEx.D9,
-        _ => ConsoleKeyEx.NoName,
+        '0' => Key.D0,
+        '1' => Key.D1,
+        '2' => Key.D2,
+        '3' => Key.D3,
+        '4' => Key.D4,
+        '5' => Key.D5,
+        '6' => Key.D6,
+        '7' => Key.D7,
+        '8' => Key.D8,
+        '9' => Key.D9,
+        _ => Key.NoName,
     };
 
     private static void AppendCommand(List<byte> replies, byte command, byte option)
